@@ -25,5 +25,10 @@ kubectl -n argocd get pods
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 ```
 
+#Create ArgoCD application
+```
+kubectl apply -n argocd -f argo-cd/app.yaml 
+```
+
 #Githube Action
 run latest workflow in github action to deploy the application
