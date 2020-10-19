@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/shashank0202/argo-kustomize.git
     targetRevision: HEAD
-    path: hello-gitops
+    path: kustomize/base
     directory:
       recurse: true
   destination:
