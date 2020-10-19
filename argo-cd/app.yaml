@@ -1,19 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: hello-gitops
+  name: master
   namespace: argocd
 spec:
-  project: default
-  source:
-    repoURL: https://github.com/shashank0202/argo-kustomize.git
-    targetRevision: HEAD
-    path: kustomize/base
-    directory:
-      recurse: true
   destination:
-    server: https://kubernetes.default.svc
     namespace: hello-gitops
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: kustomize/base
+    repoURL: 'https://github.com/shashank0202/argo-kustomize.git'
+    targetRevision: HEAD
+  project: default
   syncPolicy:
     automated:
       prune: false
