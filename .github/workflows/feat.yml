@@ -32,7 +32,10 @@ jobs:
     - run: |-
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
     - run: |-
-          kubectl get ns  
+          kubectl get ns
+    - run: |-
+          echo "printing feat branch"
+          echo ${{ github.ref }} | | sed -e "s|/|-|g"
   build:
     name: Buildgcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
     runs-on: ubuntu-latest
