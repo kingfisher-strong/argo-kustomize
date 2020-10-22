@@ -35,6 +35,10 @@ jobs:
           kubectl get ns
     - run: |-
           NAMESPACE=$(kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do   echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt && cat test.txt | grep -i ${GITHUB_REF##*/}test1234)
+          echo "$NAMESPACE"
+          echo $NAMESPACE
+          echo "${GITHUB_REF##*/}test1234"
+          echo ${GITHUB_REF##*/}test1234
           if [ -z "$NAMESPACE"=${GITHUB_REF##*/}test1234  ]
           then
               echo "\$NAMESPACE namespace already exists"
