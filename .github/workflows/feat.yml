@@ -35,7 +35,11 @@ jobs:
           kubectl get ns
     - run: |-
           echo "printing feat branch"
-          echo ${{ github.ref }} | | sed -e "s|/|-|g"
+          echo $branch | sed -e "s|/|-|g"
+          echo ${{ github.ref }} | sed -e "s|/|-|g"
+      with:
+        github_token: ${{ secrets.GH_TOKEN }}
+        branch: ${{ github.ref }}
   build:
     name: Buildgcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
     runs-on: ubuntu-latest
