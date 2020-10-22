@@ -2,7 +2,7 @@ name: Go
 
 on:
   push:
-    branches: [ master ]
+    branches: 'feat/*'
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
@@ -85,4 +85,5 @@ jobs:
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
-        github_token: ${{ secrets.GH_TOKEN }} 
+        github_token: ${{ secrets.GH_TOKEN }}
+        branch: ${{ github.ref }}
