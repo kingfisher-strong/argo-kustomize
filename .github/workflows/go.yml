@@ -15,10 +15,10 @@ jobs:
 
   gkeconnect:
   - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-      with:
-        version: '290.0.1'
-        service_account_key: ${{ secrets.GKE_SA_KEY }}
-        project_id: ${{ secrets.GKE_PROJECT }}
+    with:
+      version: '290.0.1'
+      service_account_key: ${{ secrets.GKE_SA_KEY }}
+      project_id: ${{ secrets.GKE_PROJECT }}
 
     # Configure Docker to use the gcloud command-line tool as a credential
     # helper for authentication
@@ -30,7 +30,7 @@ jobs:
   - run: |-
         kubectl get ns  
   build:
-    name: Build
+    name: Buildgcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
     runs-on: ubuntu-latest
     
     steps:
