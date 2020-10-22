@@ -39,7 +39,7 @@ jobs:
           echo $NAMESPACE
           echo "{GITHUB_REF##*/}test1234"
           echo ${GITHUB_REF##*/}test1234
-          if [ -z "$NAMESPACE"==${GITHUB_REF##*/}test1234  ]
+          if [  $NAMESPACE==${GITHUB_REF##*/}test1234  ]
           then
               echo "\$NAMESPACE namespace already exists"
           else
