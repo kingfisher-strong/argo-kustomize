@@ -36,6 +36,7 @@ jobs:
     - run: |-
           echo "printing feat branch"
           echo ${{ github.ref }} | sed -e "s|/|-|g"
+          echo ${GITHUB_REF##*/}
       # with:
       #   github_token: ${{ secrets.GH_TOKEN }}
       #   branch: ${{ github.ref }}
