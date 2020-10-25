@@ -32,12 +32,12 @@ jobs:
     - run: |-
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
     - run: |-
-          kubectl create ns feat-dd
+          kubectl get ns
           echo "$GITHUB_REF"
     - run: |-
             cat /dev/null > script.sh
             NAMESPACE=$(kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt && cat test.txt | grep -i ${GITHUB_REF##*/}test1234) >> script.sh
-            cat script.sh
+            echo $NAMESPACE
             
     - run: |-
             echo "NAMESPACE new enter"       
