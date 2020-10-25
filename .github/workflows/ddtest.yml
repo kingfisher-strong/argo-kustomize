@@ -35,7 +35,7 @@ jobs:
           kubectl get ns
           echo "$GITHUB_REF"
     - run: |-
-            NAMESPACE=$(kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt && cat test.txt | grep -i ${GITHUB_REF##*/}test1234)
+          kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt
     - run: |-
           kubectl get ns
     - run: |-
