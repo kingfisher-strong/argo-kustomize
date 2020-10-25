@@ -114,7 +114,8 @@ jobs:
     - name: "Apply deployment"
       run: |
       cd argocd
-      pwd
+      kubectl apply -n argocd -f app.yaml
+      kubectl get pods -n hello-gitops
          
     - name: Commit files
       run: |
