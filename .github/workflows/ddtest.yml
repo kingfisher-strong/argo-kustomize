@@ -39,7 +39,7 @@ jobs:
           NAMESPACE=$(sudo cat test.txt | grep -i ${GITHUB_REF##*/}test1234)
               
     - run: |-
-          kubectl get ns
+          kubectl create ns feat-dd
     - run: |-
           echo "printing feat branch"
           echo ${{ github.ref }} | sed -e "s|/|-|g"
