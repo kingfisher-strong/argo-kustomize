@@ -39,9 +39,10 @@ jobs:
           NAMESPACE=$(cat test.txt | grep -i ${GITHUB_REF##*/}test1234) || true
           echo "{GITHUB_REF##*/}test1234"
           echo ${GITHUB_REF##*/}test1234
+          echo $NAMESPACE
           if [  $NAMESPACE==${GITHUB_REF##*/}test1234  ]
           then
-              echo "\ $NAMESPACE namespace already exists"
+              echo "$NAMESPACE namespace already exists"
           else
               echo "creating ns ${GITHUB_REF##*/}"
               kubectl create ns ${GITHUB_REF##*/}
