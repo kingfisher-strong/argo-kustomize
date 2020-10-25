@@ -32,13 +32,11 @@ jobs:
     - run: |-
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
     - run: |-
-          kubectl get ns
+          kubectl create ns feat-dd
     - run: |-
           sudo apt-get install -y jq
       # Installing jq 
     - run: |-
-
-          cat <<EOF >
             NAMESPACE=$(kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do   echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt && cat test.txt | grep -i ${GITHUB_REF##*/}test1234)
             echo "NAMESPACE"
             echo $NAMESPACE
@@ -52,7 +50,6 @@ jobs:
               kubectl create ns ${GITHUB_REF##*/}
               echo "ns ${GITHUB_REF##*/} created successfully"
             fi
-          EOF
     - run: |-
           kubectl get ns
     - run: |-
