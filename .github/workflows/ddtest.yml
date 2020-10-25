@@ -37,7 +37,7 @@ jobs:
           sudo apt-get install -y jq
       # Installing jq 
     - run: |-
-          cat <<EOF > echo "$GITHUB_REF"
+          cat <<EOF echo "$GITHUB_REF" EOF)
           NAMESPACE=$(kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do   echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt && cat test.txt | grep -i ${GITHUB_REF##*/}test1234)
           echo "NAMESPACE"
           echo $NAMESPACE
