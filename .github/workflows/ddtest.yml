@@ -32,11 +32,21 @@ jobs:
     - run: |-
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
     - run: |-
-          kubectl delete ns feat-dd
+          kubectl get ns
           echo "$GITHUB_REF"
     - run: |-
           kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt
           NAMESPACE=$(cat test.txt | grep -i ${GITHUB_REF##*/}test1234) || true
+          echo "{GITHUB_REF##*/}test1234"
+          echo ${GITHUB_REF##*/}test1234
+          if [  $NAMESPACE==${GITHUB_REF##*/}test1234  ]
+          then
+              echo "\$NAMESPACE namespace already exists"
+          else
+              echo "creating ns ${GITHUB_REF##*/}"
+              kubectl create ns ${GITHUB_REF##*/}
+              echo "ns ${GITHUB_REF##*/} created successfully"
+          fi
           
               
     - run: |-
