@@ -89,6 +89,12 @@ jobs:
         repository: ${{ secrets.DOCKER_USERNAME }}/hello-gitops
         tags: ${{ github.sha }}, latest
         
+    - name: Find and Replace
+      uses: shitiomatic/str-replace@master
+      with:
+        find: "hello-gitops"
+        replace: "${GITHUB_REF##*/}"
+        include: "app.yaml"    
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
