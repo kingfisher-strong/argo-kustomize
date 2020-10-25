@@ -32,7 +32,7 @@ jobs:
     - run: |-
           gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
     - run: |-
-          kubectl delete ns feat-dd
+          kubectl get ns
           echo "$GITHUB_REF"
     - run: |-
             cat /dev/null > script.sh
