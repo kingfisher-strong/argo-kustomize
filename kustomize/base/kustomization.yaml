@@ -7,4 +7,4 @@ namespace: hello-gitops
 images:
 - name: hello-gitops
   newName: snk0202/hello-gitops
-  newTag: 80a1b8700e4d7773d477aadc3f6fffe0a7e3f463
+  newTag: b965c65f42e5ba78727b8fb0701cbbb963cb1ff5
