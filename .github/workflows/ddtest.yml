@@ -36,8 +36,8 @@ jobs:
           echo "$GITHUB_REF"
     - run: |-
             cat /dev/null > script.sh
-            echo "x="NAMESPACE=$(kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do   echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt && cat test.txt | grep -i ${GITHUB_REF##*/}test1234)"" >> script.sh
-            
+            echo "x="NAMESPACE=$(kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt && cat test.txt | grep -i ${GITHUB_REF##*/}test1234)"" >> script.sh
+            cat script.sh
             # x="NAMESPACE=$(kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do   echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt && cat test.txt | grep -i ${GITHUB_REF##*/}test1234)"
             # eval "$x"
             # echo "NAMESPACE"
