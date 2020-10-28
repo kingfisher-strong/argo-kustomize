@@ -92,7 +92,9 @@ jobs:
               sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
               cat kustomization.yaml
               cd ../../argo-cd
+              cat app.yaml
               sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" app.yaml
+              cat app.yaml
               kubectl apply -n argocd -f app.yaml
           fi
       env:
