@@ -117,34 +117,38 @@ jobs:
        cat kustomization.yaml
     
     - run: |-
+       cd kustomize/base
+       sed -i "s/namespacetobereplaced/${GITHUB_REF##*/}/g" "kustomization.yaml"
+
+    - run: |-
           cd kustomize/base
           cat kustomization.yaml
   
-    - name: Find and Replace
-      uses: jacobtomlinson/gha-find-replace@master
-      with:
-        find: namespacetobereplaced
-        replace: ${GITHUB_REF##*/}
-        include: "kustomization.yaml" # Will match all README.md files in any nested directory
+    # - name: Find and Replace
+    #   uses: jacobtomlinson/gha-find-replace@master
+    #   with:
+    #     find: namespacetobereplaced
+    #     replace: ${GITHUB_REF##*/}
+    #     include: "kustomization.yaml" # Will match all README.md files in any nested directory
 
     - run: |-
           cd kustomize/base
           cat kustomization.yaml
     
-    - run: |-
-          cd argo-cd
-          cat app.yaml
+    # - run: |-
+    #       cd argo-cd
+    #       cat app.yaml
     
-    - name: Find and Replace
-      uses: jacobtomlinson/gha-find-replace@master
-      with:
-        find: namespacetobereplaced
-        replace: ${GITHUB_REF##*/}
-        include: "app.yaml" # Will match all README.md files in any nested directory
+    # - name: Find and Replace
+    #   uses: jacobtomlinson/gha-find-replace@master
+    #   with:
+    #     find: namespacetobereplaced
+    #     replace: ${GITHUB_REF##*/}
+    #     include: "app.yaml" # Will match all README.md files in any nested directory
 
-    - run: |-
-          cd argo-cd
-          cat app.yaml
+    # - run: |-
+    #       cd argo-cd
+    #       cat app.yaml
 
     - name: Commit files
       run: |
