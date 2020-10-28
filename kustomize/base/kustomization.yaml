@@ -3,8 +3,8 @@ kind: Kustomization
 resources:
 - deployment.yaml
 - service.yaml
-namespace: vento
+namespace: polo
 images:
 - name: hello-gitops
   newName: snk0202/hello-gitops
-  newTag: b4aefdb04710e867bd2a971652b3aa991c6fd651
+  newTag: 86180419ba941837d3e96918c3ef29d7a2c52490
