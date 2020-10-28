@@ -122,11 +122,12 @@ jobs:
        export BRANCHNAME=${GITHUB_REF##*/}
        echo $BRANCHNAME
        cd kustomize/base
-      #  sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
+      
        cat kustomization.yaml
        sed -e "s/namespacetobereplaced/${BRANCHNAME}/" kustomization.yaml
        echo $?
        cat kustomization.yaml
+      #  sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
       #  sed -i "s/namespacetobereplaced/${GITHUB_REF##*/}/g" "kustomization.yaml"
 
     - run: |-
