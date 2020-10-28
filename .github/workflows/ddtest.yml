@@ -72,7 +72,9 @@ jobs:
           echo ${GITHUB_REF##*/}test1234
           echo $NAMESPACE
           if [ "$NAMESPACE" == "${GITHUB_REF##*/}test1234" ]; then
+              echo "1"
               echo "${GITHUB_REF##*/} namespace already exists"
+              echo "2"
               export BRANCHNAME=${GITHUB_REF##*/}
               cd kustomize/base
               cat kustomization.yaml
@@ -80,27 +82,34 @@ jobs:
               cat kustomization.yaml
               kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
               cat kustomization.yaml
+              echo "3"
               cd ../../argo-cd
               cat app.yaml
               sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" app.yaml
               cat app.yaml
+              kubectl apply -n argocd -f app.yaml
           else
+              echo "4"
               echo "creating ns ${GITHUB_REF##*/}"
               kubectl create ns ${GITHUB_REF##*/}
               echo "${GITHUB_REF##*/}  namespace created successfully"
               echo ${GITHUB_REF##*/}
+              echo "5"
               export BRANCHNAME=${GITHUB_REF##*/}
               echo $BRANCHNAME
               cd kustomize/base
               cat kustomization.yaml
               sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
               cat kustomization.yaml
+              kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
+              echo "5"
               cd ../../argo-cd
               cat app.yaml
               sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" app.yaml
               cat app.yaml
               kubectl apply -n argocd -f app.yaml
           fi
+          
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}  
           
