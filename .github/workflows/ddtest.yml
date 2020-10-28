@@ -34,172 +34,171 @@ jobs:
         repository: ${{ secrets.DOCKER_USERNAME }}/hello-gitops
         tags: ${{ github.sha }}, latest
   
-gkeconnect:
-  name: Setup, Build, Publish, and Deploy
-  runs-on: ubuntu-latest
-  needs: build
+  gkeconnect:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    needs: build
 
-  steps:
-  - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-    with:
-      version: '290.0.1'
-      service_account_key: ${{ secrets.GKE_SA_KEY }}
-      project_id: ${{ secrets.GKE_PROJECT }}
+    steps:
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '290.0.1'
+        service_account_key: ${{ secrets.GKE_SA_KEY }}
+        project_id: ${{ secrets.GKE_PROJECT }}
 
-    # Configure Docker to use the gcloud command-line tool as a credential
-    # helper for authentication
-  - run: |-
-        gcloud --quiet auth configure-docker
-    # Get the GKE credentials so we can deploy to the cluster
-  - run: |-
-        gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
-  - run: |-
-        kubectl get ns
-        echo "$GITHUB_REF"
+      # Configure Docker to use the gcloud command-line tool as a credential
+      # helper for authentication
+    - run: |-
+          gcloud --quiet auth configure-docker
+      # Get the GKE credentials so we can deploy to the cluster
+    - run: |-
+          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+    - run: |-
+          kubectl get ns
+          echo "$GITHUB_REF"
 
-  - name: Check out code
-    uses: actions/checkout@v2
+    - name: Check out code
+      uses: actions/checkout@v2
 
-  - name: Setup Kustomize
-    uses: imranismail/setup-kustomize@v1
-    with:
-      kustomize-version: "3.6.1"
+    - name: Setup Kustomize
+      uses: imranismail/setup-kustomize@v1
+      with:
+        kustomize-version: "3.6.1"
 
-  - run: |-
-        kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt
-        NAMESPACE=$(cat test.txt | grep -i ${GITHUB_REF##*/}test1234) || true
-        echo "{GITHUB_REF##*/}test1234"
-        echo ${GITHUB_REF##*/}test1234
-        echo $NAMESPACE
-        if [ "$NAMESPACE" == "${GITHUB_REF##*/}test1234" ]; then
-            echo "${GITHUB_REF##*/} namespace already exists"
-            export BRANCHNAME=${GITHUB_REF##*/}
-            cd kustomize/base
-            cat kustomization.yaml
-            sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
-            cat kustomization.yaml
-            kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
-            cat kustomization.yaml
-            cat app.yaml
-        else
-            echo "creating ns ${GITHUB_REF##*/}"
-            kubectl create ns ${GITHUB_REF##*/}
-            echo "${GITHUB_REF##*/}  namespace created successfully"
-            echo ${GITHUB_REF##*/}
-            export BRANCHNAME=${GITHUB_REF##*/}
-            echo $BRANCHNAME
-            cd kustomize/base
-            cat kustomization.yaml
-            sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
-            cat kustomization.yaml
-            cd ../../argo-cd
-            cat app.yaml
-            sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" app.yaml
-            cat app.yaml
-            kubectl apply -n argocd -f app.yaml
-        fi
-    env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}  
+    - run: |-
+          kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt
+          NAMESPACE=$(cat test.txt | grep -i ${GITHUB_REF##*/}test1234) || true
+          echo "{GITHUB_REF##*/}test1234"
+          echo ${GITHUB_REF##*/}test1234
+          echo $NAMESPACE
+          if [ "$NAMESPACE" == "${GITHUB_REF##*/}test1234" ]; then
+              echo "${GITHUB_REF##*/} namespace already exists"
+              export BRANCHNAME=${GITHUB_REF##*/}
+              cd kustomize/base
+              cat kustomization.yaml
+              sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
+              cat kustomization.yaml
+              kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
+              cat kustomization.yaml
+          else
+              echo "creating ns ${GITHUB_REF##*/}"
+              kubectl create ns ${GITHUB_REF##*/}
+              echo "${GITHUB_REF##*/}  namespace created successfully"
+              echo ${GITHUB_REF##*/}
+              export BRANCHNAME=${GITHUB_REF##*/}
+              echo $BRANCHNAME
+              cd kustomize/base
+              cat kustomization.yaml
+              sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
+              cat kustomization.yaml
+              cd ../../argo-cd
+              cat app.yaml
+              sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" app.yaml
+              cat app.yaml
+              kubectl apply -n argocd -f app.yaml
+          fi
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}  
+          
+              
+    - run: |-
+          kubectl get ns
+    - run: |-
+          echo "printing feat branch"
+          echo ${{ github.ref }} | sed -e "s|/|-|g"
+          echo ${GITHUB_REF##*/}
+    - run: |-
+          ls
+          pwd
+  
+    # - run: |-
+    #       IS_DEPLOYED=$(kubectl get deploy -n locust | grep -i locust-master)
+    #       echo $IS_DEPLOYED
+
+    #       if [ -z "$IS_DEPLOYED" ]
+    #       then
+    #         echo "\$IS_DEPLOYED is empty"
+    #       else
+    #         echo "\$IS_DEPLOYED is NOT empty"
+    #       fi
+      # with:
+      #   github_token: ${{ secrets.GH_TOKEN }}
+      #   branch: ${{ github.ref }}
         
-            
-  - run: |-
-        kubectl get ns
-  - run: |-
-        echo "printing feat branch"
-        echo ${{ github.ref }} | sed -e "s|/|-|g"
-        echo ${GITHUB_REF##*/}
-  - run: |-
-        ls
-        pwd
+        
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: build
 
-  # - run: |-
-  #       IS_DEPLOYED=$(kubectl get deploy -n locust | grep -i locust-master)
-  #       echo $IS_DEPLOYED
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
 
-  #       if [ -z "$IS_DEPLOYED" ]
-  #       then
-  #         echo "\$IS_DEPLOYED is empty"
-  #       else
-  #         echo "\$IS_DEPLOYED is NOT empty"
-  #       fi
-    # with:
-    #   github_token: ${{ secrets.GH_TOKEN }}
-    #   branch: ${{ github.ref }}
-      
-      
-deploy:
-  name: Deploy
-  runs-on: ubuntu-latest
-  needs: build
+    - name: Setup Kustomize
+      uses: imranismail/setup-kustomize@v1
+      with:
+        kustomize-version: "3.6.1"
 
-  steps:
-  - name: Check out code
-    uses: actions/checkout@v2
-
-  - name: Setup Kustomize
-    uses: imranismail/setup-kustomize@v1
-    with:
-      kustomize-version: "3.6.1"
-
-  # - name: Update Kubernetes resources
-  #   env:
-  #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  #   run: |
-  #    cd kustomize/base
-  #    kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
-  #    cat kustomization.yaml
-  
-  - run: |-
-
-      echo ${GITHUB_REF##*/}
-      export BRANCHNAME=${GITHUB_REF##*/}
-      echo $BRANCHNAME
+    # - name: Update Kubernetes resources
+    #   env:
+    #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+    #   run: |
+    #    cd kustomize/base
+    #    kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
+    #    cat kustomization.yaml
     
-      cd kustomize/base
-      cat kustomization.yaml
-      sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
-      cat kustomization.yaml
+    - run: |-
+
+       echo ${GITHUB_REF##*/}
+       export BRANCHNAME=${GITHUB_REF##*/}
+       echo $BRANCHNAME
       
+       cd kustomize/base
+       cat kustomization.yaml
+       sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
+       cat kustomization.yaml
+       
+      
+      #  sed -i "s/namespacetobereplaced/${GITHUB_REF##*/}/g" "kustomization.yaml"
     
-    #  sed -i "s/namespacetobereplaced/${GITHUB_REF##*/}/g" "kustomization.yaml"
   
+    # - name: Find and Replace
+    #   uses: jacobtomlinson/gha-find-replace@master
+    #   with:
+    #     find: namespacetobereplaced
+    #     replace: ${GITHUB_REF##*/}
+    #     include: "kustomization.yaml" # Will match all README.md files in any nested directory
 
-  # - name: Find and Replace
-  #   uses: jacobtomlinson/gha-find-replace@master
-  #   with:
-  #     find: namespacetobereplaced
-  #     replace: ${GITHUB_REF##*/}
-  #     include: "kustomization.yaml" # Will match all README.md files in any nested directory
+    - run: |-
+          cd kustomize/base
+          cat kustomization.yaml
+    
+    # - run: |-
+    #       cd argo-cd
+    #       cat app.yaml
+    
+    # - name: Find and Replace
+    #   uses: jacobtomlinson/gha-find-replace@master
+    #   with:
+    #     find: namespacetobereplaced
+    #     replace: ${GITHUB_REF##*/}
+    #     include: "app.yaml" # Will match all README.md files in any nested directory
 
-  - run: |-
-        cd kustomize/base
-        cat kustomization.yaml
-  
-  # - run: |-
-  #       cd argo-cd
-  #       cat app.yaml
-  
-  # - name: Find and Replace
-  #   uses: jacobtomlinson/gha-find-replace@master
-  #   with:
-  #     find: namespacetobereplaced
-  #     replace: ${GITHUB_REF##*/}
-  #     include: "app.yaml" # Will match all README.md files in any nested directory
+    # - run: |-
+    #       cd argo-cd
+    #       cat app.yaml
 
-  # - run: |-
-  #       cd argo-cd
-  #       cat app.yaml
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git checkout kustomize/base/kustomization.yaml
+        git checkout argo-cd/app.yaml
+        git commit -am "Bump docker tag"
 
-  - name: Commit files
-    run: |
-      git config --local user.email "action@github.com"
-      git config --local user.name "GitHub Action"
-      git checkout kustomize/base/kustomization.yaml
-      git checkout argo-cd/app.yaml
-      git commit -am "Bump docker tag"
-
-  - name: Push changes
-    uses: ad-m/github-push-action@master
-    with:
-      github_token: ${{ secrets.GH_TOKEN }}
-      branch: ${{ github.ref }}
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GH_TOKEN }}
+        branch: ${{ github.ref }}
