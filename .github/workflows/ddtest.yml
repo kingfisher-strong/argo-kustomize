@@ -127,6 +127,7 @@ jobs:
        cat kustomization.yaml
        sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
        cat kustomization.yaml
+       rm ns.txt
       
       #  sed -i "s/namespacetobereplaced/${GITHUB_REF##*/}/g" "kustomization.yaml"
     
