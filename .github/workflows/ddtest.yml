@@ -119,21 +119,17 @@ jobs:
     - run: |-
 
        echo ${GITHUB_REF##*/}
-       export BRANCHNAME=${GITHUB_REF##*/}
+       echo "${GITHUB_REF##*/}" >> ns.txt
+       BRANCHNAME=$(cat ns.txt | grep -i ${GITHUB_REF##*/}) || true
        echo $BRANCHNAME
+       cat ns.txt 
        cd kustomize/base
        cat kustomization.yaml
-       
+       sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
        cat kustomization.yaml
-      #  sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
+      
       #  sed -i "s/namespacetobereplaced/${GITHUB_REF##*/}/g" "kustomization.yaml"
-    - name: sed
-      uses: lefherz/action-sed@master
-      with:
-        args:  sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
-    - run: |-
-          cd kustomize/base
-          cat kustomization.yaml
+    
   
     # - name: Find and Replace
     #   uses: jacobtomlinson/gha-find-replace@master
