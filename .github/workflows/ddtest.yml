@@ -94,7 +94,6 @@ jobs:
               cd kustomize/base
               cat kustomization.yaml
               sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
-              cat kustomization.yaml
               kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
               echo "5"
               cd ../../argo-cd
@@ -102,7 +101,7 @@ jobs:
               sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" app.yaml
               cat app.yaml
               kubectl apply -n argocd -f app.yaml
-              
+
           fi
           
       env:
