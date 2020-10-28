@@ -3,7 +3,7 @@ kind: Kustomization
 resources:
 - deployment.yaml
 - service.yaml
-namespace: dddd
+namespace: namespacetobereplaced
 images:
 - name: hello-gitops
   newName: snk0202/hello-gitops
