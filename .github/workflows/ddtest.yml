@@ -60,8 +60,9 @@ jobs:
           pwd
   
     - run: |-
-          cat /home/runner/work/argo-kustomize/argo-kustomize/kustomize/base/kustomization.yaml || true
-
+          cd kustomize/base
+          cat kustomization.yaml
+  
     - name: Find and Replace
       uses: jacobtomlinson/gha-find-replace@master
       with:
@@ -70,10 +71,12 @@ jobs:
         include: "kustomization.yaml" # Will match all README.md files in any nested directory
 
     - run: |-
-          cat /home/runner/work/argo-kustomize/argo-kustomize/kustomize/base/kustomization.yaml || true
+          cd kustomize/base
+          cat kustomization.yaml
     
     - run: |-
-          cat /home/runner/work/argo-kustomize/argo-kustomize/argo-cd/app.yaml || true
+          cd argo-cd
+          cat app.yaml
     
     - name: Find and Replace
       uses: jacobtomlinson/gha-find-replace@master
@@ -82,9 +85,9 @@ jobs:
         replace: ${GITHUB_REF##*/}
         include: "app.yaml" # Will match all README.md files in any nested directory
 
-
     - run: |-
-          cat /home/runner/work/argo-kustomize/argo-kustomize/argo-cd/app.yaml || true
+          cd argo-cd
+          cat app.yaml
   
     - run: |-
           IS_DEPLOYED=$(kubectl get deploy -n locust | grep -i locust-master)
