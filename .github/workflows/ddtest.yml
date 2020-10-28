@@ -206,7 +206,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git checkout kustomize/base/kustomization.yaml
+        
         git checkout argo-cd/app.yaml
         git commit -am "Bump docker tag"
 
