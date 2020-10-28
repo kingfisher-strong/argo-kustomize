@@ -4,12 +4,12 @@ metadata:
   name: dddd
 spec:
   destination:
-    namespace: namespacetobereplaced
+    namespace: ${GITHUB_REF##*/}
     server: 'https://kubernetes.default.svc'
   source:
     path: kustomize/base
     repoURL: 'https://github.com/shashank0202/argo-kustomize.git'
-    targetRevision: feat/namespacetobereplaced
+    targetRevision: feat/${GITHUB_REF##*/}
   project: default
   syncPolicy:
     automated:

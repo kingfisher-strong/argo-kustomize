@@ -3,8 +3,8 @@ kind: Kustomization
 resources:
 - deployment.yaml
 - service.yaml
-namespace: namespacetobereplaced
+namespace: ${GITHUB_REF##*/}
 images:
 - name: hello-gitops
   newName: snk0202/hello-gitops
-  newTag: b562c8b672b64c6ae9bdabc01a220320915d187d
+  newTag: 9ee8260264d12719f9e25d856e2e890b085f1f0c
