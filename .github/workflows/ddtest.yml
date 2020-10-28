@@ -13,6 +13,27 @@ env:
 
 jobs:
 
+  build:
+    name: Buildgcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.14
+      
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v1.1.0
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: ${{ secrets.DOCKER_USERNAME }}/hello-gitops
+        tags: ${{ github.sha }}, latest
+  
   gkeconnect:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
@@ -34,6 +55,12 @@ jobs:
     - run: |-
           kubectl get ns
           echo "$GITHUB_REF"
+  
+    - name: Setup Kustomize
+      uses: imranismail/setup-kustomize@v1
+      with:
+        kustomize-version: "3.6.1"
+
     - run: |-
           kubectl get ns -o json |  jq '.items[].metadata.name' | while read i; do echo $i"test1234" ; done > test.txt && sed -i 's/\"//g' test.txt
           NAMESPACE=$(cat test.txt | grep -i ${GITHUB_REF##*/}test1234) || true
@@ -42,11 +69,29 @@ jobs:
           echo $NAMESPACE
           if [ "$NAMESPACE" == "${GITHUB_REF##*/}test1234" ]; then
               echo "${GITHUB_REF##*/} namespace already exists"
+              cd kustomize/base
+              cat kustomization.yaml
+              sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
+              cat kustomization.yaml
+              kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
+              cat kustomization.yaml
           else
               echo "creating ns ${GITHUB_REF##*/}"
               kubectl create ns ${GITHUB_REF##*/}
               echo "${GITHUB_REF##*/}  namespace created successfully"
+              echo ${GITHUB_REF##*/}
+              export BRANCHNAME=${GITHUB_REF##*/}
+              echo $BRANCHNAME
+              cd kustomize/base
+              cat kustomization.yaml
+              sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
+              cat kustomization.yaml
+              cd ../../argo-cd
+              sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" app.yaml
+              kubectl apply -n argocd -f app.yaml
           fi
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}  
           
               
     - run: |-
@@ -59,39 +104,19 @@ jobs:
           ls
           pwd
   
-    - run: |-
-          IS_DEPLOYED=$(kubectl get deploy -n locust | grep -i locust-master)
-          echo $IS_DEPLOYED
+    # - run: |-
+    #       IS_DEPLOYED=$(kubectl get deploy -n locust | grep -i locust-master)
+    #       echo $IS_DEPLOYED
 
-          if [ -z "$IS_DEPLOYED" ]
-          then
-            echo "\$IS_DEPLOYED is empty"
-          else
-            echo "\$IS_DEPLOYED is NOT empty"
-          fi
+    #       if [ -z "$IS_DEPLOYED" ]
+    #       then
+    #         echo "\$IS_DEPLOYED is empty"
+    #       else
+    #         echo "\$IS_DEPLOYED is NOT empty"
+    #       fi
       # with:
       #   github_token: ${{ secrets.GH_TOKEN }}
       #   branch: ${{ github.ref }}
-  build:
-    name: Buildgcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Set up Go 1.x
-      uses: actions/setup-go@v2
-      with:
-        go-version: ^1.14
-      
-    - name: Check out code
-      uses: actions/checkout@v2
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v1.1.0
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: ${{ secrets.DOCKER_USERNAME }}/hello-gitops
-        tags: ${{ github.sha }}, latest
         
         
   deploy:
@@ -108,13 +133,13 @@ jobs:
       with:
         kustomize-version: "3.6.1"
 
-    - name: Update Kubernetes resources
-      env:
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      run: |
-       cd kustomize/base
-       kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
-       cat kustomization.yaml
+    # - name: Update Kubernetes resources
+    #   env:
+    #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+    #   run: |
+    #    cd kustomize/base
+    #    kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
+    #    cat kustomization.yaml
     
     - run: |-
 
