@@ -37,6 +37,7 @@ jobs:
   gkeconnect:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
+    needs: build
 
     steps:
     - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
@@ -72,6 +73,7 @@ jobs:
           echo $NAMESPACE
           if [ "$NAMESPACE" == "${GITHUB_REF##*/}test1234" ]; then
               echo "${GITHUB_REF##*/} namespace already exists"
+              export BRANCHNAME=${GITHUB_REF##*/}
               cd kustomize/base
               cat kustomization.yaml
               sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
