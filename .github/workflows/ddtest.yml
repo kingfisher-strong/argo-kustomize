@@ -106,8 +106,9 @@ jobs:
               cat kustomization.yaml
               echo "5"
               cd ../../argo-cd
+
               cat app.yaml
-              sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" app.yaml
+              sed -i "s/namespacetobereplaced/\\${GITHUB_REF##*/}/g" app.yaml
               cat app.yaml
               kubectl apply -n argocd -f app.yaml
 
