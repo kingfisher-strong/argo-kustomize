@@ -78,7 +78,7 @@ jobs:
               export BRANCHNAME=${GITHUB_REF##*/}
               cd kustomize/base
               cat kustomization.yaml
-              sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
+              sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml || true
               cat kustomization.yaml
               kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
               cat kustomization.yaml
@@ -121,6 +121,20 @@ jobs:
     - run: |-
           ls
           pwd
+
+    - name: Commit files
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        git checkout argo-cd/app.yaml
+        git commit -am "Bump docker tag"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GH_TOKEN }}
+        branch: ${{ github.ref }}
   
     # - run: |-
     #       IS_DEPLOYED=$(kubectl get deploy -n locust | grep -i locust-master)
@@ -137,38 +151,38 @@ jobs:
       #   branch: ${{ github.ref }}
         
         
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: build
+  # deploy:
+  #   name: Deploy
+  #   runs-on: ubuntu-latest
+  #   needs: build
 
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v2
+  #   steps:
+    # - name: Check out code
+    #   uses: actions/checkout@v2
 
-    - name: Setup Kustomize
-      uses: imranismail/setup-kustomize@v1
-      with:
-        kustomize-version: "3.6.1"
+    # - name: Setup Kustomize
+    #   uses: imranismail/setup-kustomize@v1
+    #   with:
+    #     kustomize-version: "3.6.1"
 
-    # - name: Update Kubernetes resources
-    #   env:
-    #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-    #   run: |
-    #    cd kustomize/base
-    #    kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
-    #    cat kustomization.yaml
+    # # - name: Update Kubernetes resources
+    # #   env:
+    # #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+    # #   run: |
+    # #    cd kustomize/base
+    # #    kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
+    # #    cat kustomization.yaml
     
-    - run: |-
+    # - run: |-
 
-       echo ${GITHUB_REF##*/}
-       export BRANCHNAME=${GITHUB_REF##*/}
-       echo $BRANCHNAME
+    #    echo ${GITHUB_REF##*/}
+    #    export BRANCHNAME=${GITHUB_REF##*/}
+    #    echo $BRANCHNAME
       
-       cd kustomize/base
-       cat kustomization.yaml
-       sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
-       cat kustomization.yaml
+    #    cd kustomize/base
+    #    cat kustomization.yaml
+    #    sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
+    #    cat kustomization.yaml
        
       
       #  sed -i "s/namespacetobereplaced/${GITHUB_REF##*/}/g" "kustomization.yaml"
@@ -181,9 +195,9 @@ jobs:
     #     replace: ${GITHUB_REF##*/}
     #     include: "kustomization.yaml" # Will match all README.md files in any nested directory
 
-    - run: |-
-          cd kustomize/base
-          cat kustomization.yaml
+    # - run: |-
+    #       cd kustomize/base
+    #       cat kustomization.yaml
     
     # - run: |-
     #       cd argo-cd
@@ -200,16 +214,16 @@ jobs:
     #       cd argo-cd
     #       cat app.yaml
 
-    - name: Commit files
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
+    # - name: Commit files
+    #   run: |
+    #     git config --local user.email "action@github.com"
+    #     git config --local user.name "GitHub Action"
         
-        git checkout argo-cd/app.yaml
-        git commit -am "Bump docker tag"
+    #     git checkout argo-cd/app.yaml
+    #     git commit -am "Bump docker tag"
 
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GH_TOKEN }}
-        branch: ${{ github.ref }}
+    # - name: Push changes
+    #   uses: ad-m/github-push-action@master
+    #   with:
+    #     github_token: ${{ secrets.GH_TOKEN }}
+    #     branch: ${{ github.ref }}
