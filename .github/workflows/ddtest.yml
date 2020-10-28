@@ -56,7 +56,6 @@ jobs:
     - run: |-
           kubectl get ns
           echo "$GITHUB_REF"
-
     - name: Check out code
       uses: actions/checkout@v2
 
@@ -107,10 +106,9 @@ jobs:
               echo "5"
               cd ../../argo-cd
               cat app.yaml
-              sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" app.yaml
+              sed -i "s/namespacetobereplaced/\\${GITHUB_REF##*/}/g" app.yaml
               cat app.yaml
               kubectl apply -n argocd -f app.yaml
-
           fi
           # sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml 
       env:
@@ -126,7 +124,6 @@ jobs:
     - run: |-
           ls
           pwd
-
     - name: Commit files
       run: |
         git config --local user.email "action@github.com"
@@ -134,7 +131,6 @@ jobs:
         
         git checkout argo-cd/app.yaml
         git commit -am "Bump docker tag"
-
     - name: Push changes
       uses: ad-m/github-push-action@master
       with:
