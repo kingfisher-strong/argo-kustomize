@@ -7,4 +7,4 @@ namespace: vento
 images:
 - name: hello-gitops
   newName: snk0202/hello-gitops
-  newTag: 4dc03498c076a49e123bddc50980b486cf59c1fc
+  newTag: b4aefdb04710e867bd2a971652b3aa991c6fd651
