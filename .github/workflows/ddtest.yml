@@ -59,11 +59,11 @@ jobs:
           cat kustomize/base/kustomization.yaml
 
     - name: Find and Replace
-        uses: jacobtomlinson/gha-find-replace@master
-        with:
-          find: namespacetobereplaced
-          replace: ${GITHUB_REF##*/}
-          include: "kustomize/base/kustomization.yaml" # Will match all README.md files in any nested directory
+      uses: jacobtomlinson/gha-find-replace@master
+      with:
+        find: namespacetobereplaced
+        replace: ${GITHUB_REF##*/}
+        include: "kustomize/base/kustomization.yaml" # Will match all README.md files in any nested directory
     - run: |-
           cat kustomize/base/kustomization.yaml
     
@@ -71,11 +71,11 @@ jobs:
           cat argo-cd/app.yaml
     
     - name: Find and Replace
-        uses: jacobtomlinson/gha-find-replace@master
-        with:
-          find: namespacetobereplaced
-          replace: ${GITHUB_REF##*/}
-          include: "argo-cd/app.yaml" # Will match all README.md files in any nested directory
+      uses: jacobtomlinson/gha-find-replace@master
+      with:
+        find: namespacetobereplaced
+        replace: ${GITHUB_REF##*/}
+        include: "argo-cd/app.yaml" # Will match all README.md files in any nested directory
 
 
     - run: |-
