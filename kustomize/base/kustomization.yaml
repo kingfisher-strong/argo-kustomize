@@ -7,4 +7,4 @@ namespace: ${GITHUB_REF##*/}
 images:
 - name: hello-gitops
   newName: snk0202/hello-gitops
-  newTag: d71eeffaed88e9267c6730dd757e1cd8d0575983
+  newTag: c9e3e5a0379ec3806b313bd46e11a644b992b211
