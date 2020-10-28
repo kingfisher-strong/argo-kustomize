@@ -119,15 +119,14 @@ jobs:
     - run: |-
 
        echo ${GITHUB_REF##*/}
-       echo "${GITHUB_REF##*/}" >> ns.txt
-       BRANCHNAME=$(cat ns.txt | grep -i ${GITHUB_REF##*/}) || true
+       export BRANCHNAME=${GITHUB_REF##*/}
        echo $BRANCHNAME
-       cat ns.txt 
+      
        cd kustomize/base
        cat kustomization.yaml
        sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml
        cat kustomization.yaml
-       rm ns.txt
+       
       
       #  sed -i "s/namespacetobereplaced/${GITHUB_REF##*/}/g" "kustomization.yaml"
     
