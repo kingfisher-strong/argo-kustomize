@@ -82,7 +82,7 @@ jobs:
               echo $NAMESPACE2
               sed -i "s/${NAMESPACE2}/namespace: ${BRANCHNAME}/g" kustomization.yaml || true
               cat kustomization.yaml
-              kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
+              kustomize edit set image ${BRANCHNAME}=$DOCKER_USERNAME/${BRANCHNAME}:$GITHUB_SHA
               cat kustomization.yaml
              
           else
@@ -101,7 +101,7 @@ jobs:
               sed -i "s/${NAMESPACE2}/namespace: ${BRANCHNAME}/g" kustomization.yaml || true
               echo "cat  **"
               cat kustomization.yaml
-              kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
+              kustomize edit set image ${BRANCHNAME}=$DOCKER_USERNAME/${BRANCHNAME}:$GITHUB_SHA
               echo "cat ***"
               cat kustomization.yaml
               echo "5"
