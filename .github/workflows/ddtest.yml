@@ -114,6 +114,7 @@ jobs:
               echo $BRANCHNAME
               sed -i "s/namespacetobereplaced/${GITHUB_REF##*/}/g" app.yaml
               cat app.yaml
+              echo "7"
               kubectl apply -n argocd -f app.yaml
 
           fi
