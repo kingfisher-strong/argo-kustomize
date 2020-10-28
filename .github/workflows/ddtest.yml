@@ -56,6 +56,10 @@ jobs:
           echo ${{ github.ref }} | sed -e "s|/|-|g"
           echo ${GITHUB_REF##*/}
     - run: |-
+          ls
+          pwd
+  
+    - run: |-
           cat kustomize/base/kustomization.yaml
 
     - name: Find and Replace
