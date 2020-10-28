@@ -8,3 +8,6 @@ images:
 - name: hello-gitops
   newName: snk0202/hello-gitops
   newTag: 9ae98962e7a8c2c48c0c120b4faf7ee5c71db9bb
+- name: vento
+  newName: snk0202/vento
+  newTag: 9b531a4f9ff7378230a5ef979efb2ed054847e8a
