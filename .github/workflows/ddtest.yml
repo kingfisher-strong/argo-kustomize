@@ -123,7 +123,7 @@ jobs:
        echo $BRANCHNAME
        cd kustomize/base
        sed -i "s/namespacetobereplaced/\\$BRANCHNAME/g" kustomization.yaml
-       cd kustomize/base
+      #  cd kustomize/base
        cat kustomization.yaml
       #  sed -i "s/namespacetobereplaced/${GITHUB_REF##*/}/g" "kustomization.yaml"
 
