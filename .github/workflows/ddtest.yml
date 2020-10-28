@@ -78,10 +78,13 @@ jobs:
               export BRANCHNAME=${GITHUB_REF##*/}
               cd kustomize/base
               cat kustomization.yaml
-              sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml || true
+              NAMESPACE2=$(cat kustomization.yaml | grep -i namespace:) || true
+              echo $NAMESPACE2
+              sed -i "s/${NAMESPACE2}/namespace: ${BRANCHNAME}/g" kustomization.yaml || true
               cat kustomization.yaml
               kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
               cat kustomization.yaml
+             
           else
               echo "4"
               echo "creating ns ${GITHUB_REF##*/}"
@@ -93,7 +96,9 @@ jobs:
               echo $BRANCHNAME
               cd kustomize/base
               cat kustomization.yaml
-              sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml || true
+              NAMESPACE2=$(cat kustomization.yaml | grep -i namespace:) || true
+              echo $NAMESPACE2
+              sed -i "s/${NAMESPACE2}/namespace: ${BRANCHNAME}/g" kustomization.yaml || true
               echo "cat  **"
               cat kustomization.yaml
               kustomize edit set image hello-gitops=$DOCKER_USERNAME/hello-gitops:$GITHUB_SHA
@@ -107,7 +112,7 @@ jobs:
               kubectl apply -n argocd -f app.yaml
 
           fi
-          
+          # sed -i "s/namespacetobereplaced/\\${BRANCHNAME}/g" kustomization.yaml || true
       env:
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}  
           
